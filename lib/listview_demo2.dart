@@ -78,15 +78,45 @@ class _ListScreenState extends State<ListScreen> {
         title: Text('Material App Bar'),
       ),
       body:
-      Container(
-        child: indicator==false? createDynamicList(movieList) : Center(child: SizedBox(
-          width: 32,
-          height: 32,
-          child: LoadingIndicator(
-              indicatorType: Indicator.ballPulse, /// Required, The loading type of the widget
-              strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+      Column(
+        children: [
+          TextField(
+
+            onChanged: (value) {
+              print(value);
+
+              var original=movieList;
+               var newMovieList=original.where((element) => element.name.toString().contains(value));
+              setState(() {
+                movieList = newMovieList.toList();
+              });
+
+              if(newMovieList.length==0){
+               setState(() {
+                 movieList=original;
+               });
+              }
+            },
+            decoration:  InputDecoration(
+      labelText: 'Search',
+
+        border: OutlineInputBorder(),
+        suffixIcon: Icon(
+          Icons.search,
+        ),
+        ),
           ),
-        ),),
+          Container(
+            child: indicator==false? createDynamicList(movieList) : Center(child: SizedBox(
+              width: 32,
+              height: 32,
+              child: LoadingIndicator(
+                  indicatorType: Indicator.ballPulse, /// Required, The loading type of the widget
+                  strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+              ),
+            ),),
+          ),
+        ],
       ),
 
     );
@@ -97,43 +127,45 @@ class _ListScreenState extends State<ListScreen> {
 
 
   createDynamicList(List<Movie> movieList) {
-    return ListView.builder(
+    return Expanded(
+      child: ListView.builder(
 
-        shrinkWrap: true,
-        itemCount: movieList.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: InkWell(
-              onTap: () {
-                print(movieList[index].name);
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Image.network(movieList[index].photoURL, width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            margin: EdgeInsets.all(10),
-                            child: Text(movieList[index].name, style: TextStyle(
-                                fontSize: 20), textAlign: TextAlign.start,)),
-                        Container(
-                            margin: EdgeInsets.all(10),
-                            child: Text(
-                                movieList[index].description, maxLines: 10)),
-                      ],
-                    ),
-                  )
-                ],
+          shrinkWrap: true,
+          itemCount: movieList.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: InkWell(
+                onTap: () {
+                  print(movieList[index].name);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Image.network(movieList[index].photoURL, width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.all(10),
+                              child: Text(movieList[index].name, style: TextStyle(
+                                  fontSize: 20), textAlign: TextAlign.start,)),
+                          Container(
+                              margin: EdgeInsets.all(10),
+                              child: Text(
+                                  movieList[index].description, maxLines: 10)),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
+      ),
     );
   }
 
